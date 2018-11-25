@@ -8,10 +8,11 @@
         Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
     <Grid>
         <DockPanel LastChildFill="True">
-            <TextBox x:Name="textboxScript" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" Text='1..1000 | foreach {Write-Progress -Activity "Doing Task" -Status "Task #$_" -PercentComplete (($_/1000)*100)}' VerticalAlignment="Top"/>
+            <TextBox x:Name="textboxScript" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" Text='gci c:\windows\system32' VerticalAlignment="Top"/>
             <Button DockPanel.Dock="Top" Content="Synchronous" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="Button_Click" />
             <Button DockPanel.Dock="Top" Content="Asynchronous" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="Button_Click_1"  />
             <Button DockPanel.Dock="Top" Content="Clear Output" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="Button_Click_2"  />
+            <Button DockPanel.Dock="Top" Content="Break" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="Button_Click_3"  />
             <Label x:Name="labelProgress" Content="Progress:"  DockPanel.Dock="Top" />
             <TextBox x:Name="textboxOutput" Text="PS C:\> " FontFamily="Consolas" />
             

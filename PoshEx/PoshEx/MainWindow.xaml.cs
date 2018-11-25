@@ -20,7 +20,9 @@ namespace PoshEx {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        PowerShell poshInstance = PowerShell.Create();
+        PowerShell _poshInstance = PowerShell.Create();
+        //IAsyncResult _asyncResult;
+
         public MainWindow() {
             InitializeComponent();
 
@@ -40,30 +42,30 @@ namespace PoshEx {
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            poshInstance.Dispose();
+            _poshInstance.Dispose();
 
         }
 
         private void ExecuteSynchronous(string script) {
              
-            poshInstance.AddScript($"{script} | Out-String -Stream");
-            Collection<PSObject> psOutput = poshInstance.Invoke();
+            _poshInstance.AddScript($"{script} | Out-String -Stream");
+            Collection<PSObject> psOutput = _poshInstance.Invoke();
             SetOutput(script, false);
 
             foreach (PSObject item in psOutput) {
                 SetOutput(item.ToString(), false);
             }
-            if (poshInstance.Streams.Error.Count > 0) {
-                SetOutput(poshInstance.Streams.Error.ToString(), false);
+            if (_poshInstance.Streams.Error.Count > 0) {
+                SetOutput(_poshInstance.Streams.Error.ToString(), false);
             }
 
             SetOutput("", true);
         }
 
         private void ExecuteAsynchronous(string script) {
-            poshInstance.Streams.ClearStreams();
-            poshInstance.Commands.Clear();
-            poshInstance.AddScript($"{script} | Out-String -Stream");
+            _poshInstance.Streams.ClearStreams();
+            _poshInstance.Commands.Clear();
+            _poshInstance.AddScript($"{script} | Out-String -Stream");
 
             PSDataCollection<PSObject> outputCollection = new PSDataCollection<PSObject>();
             outputCollection.DataAdded += outputCollection_DataAdded;
@@ -71,14 +73,14 @@ namespace PoshEx {
             // the streams (error,debug,progress, etc) are available on the poshInstance
             // we can review them during or after execution
             // we can also be notified when a new item is written to the stream (like this):
-            poshInstance.Streams.Error.DataAdded += Error_DataAdded;
-            poshInstance.Streams.Progress.DataAdded += Progress_DataAdded;
+            _poshInstance.Streams.Error.DataAdded += Error_DataAdded;
+            _poshInstance.Streams.Progress.DataAdded += Progress_DataAdded;
 
             //begin invoke execution on the pipeline
             // use this overload to specify an output stream buffer
-            IAsyncResult asyncResult = poshInstance.BeginInvoke<PSObject, PSObject>(null,outputCollection);
+            IAsyncResult asyncResult = _poshInstance.BeginInvoke<PSObject, PSObject>(null,outputCollection);
 
-            SetOutput(poshInstance.Commands.Commands[0].ToString(), false);
+            SetOutput(_poshInstance.Commands.Commands[0].ToString(), false);
 
 
         }
@@ -113,6 +115,12 @@ namespace PoshEx {
         private void Button_Click_2(object sender, RoutedEventArgs e) {
             textboxOutput.Clear();
             SetOutput("", true);
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e) {
+            //IAsyncResult foo = _poshInstance.ConnectAsync();
+            _poshInstance.BeginStop(null,null);
+
         }
     }
 }
