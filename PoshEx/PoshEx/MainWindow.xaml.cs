@@ -73,8 +73,11 @@ namespace PoshEx {
             // the streams (error,debug,progress, etc) are available on the poshInstance
             // we can review them during or after execution
             // we can also be notified when a new item is written to the stream (like this):
+            _poshInstance.Streams.Error.DataAdded -= Error_DataAdded;
             _poshInstance.Streams.Error.DataAdded += Error_DataAdded;
             _poshInstance.Streams.Progress.DataAdded += Progress_DataAdded;
+            _poshInstance.Streams.Verbose.DataAdded -= Verbose_DataAdded;
+            _poshInstance.Streams.Verbose.DataAdded += Verbose_DataAdded;
 
             //begin invoke execution on the pipeline
             // use this overload to specify an output stream buffer
@@ -83,6 +86,13 @@ namespace PoshEx {
             SetOutput(_poshInstance.Commands.Commands[0].ToString(), false);
 
 
+        }
+
+        private void Verbose_DataAdded(object sender, DataAddedEventArgs e) {
+            this.Dispatcher.Invoke(() => {
+                var records = (PSDataCollection<VerboseRecord>)sender;
+                SetOutput(records[e.Index].ToString(), false);
+            });
         }
 
         private void Progress_DataAdded(object sender, DataAddedEventArgs e) {
