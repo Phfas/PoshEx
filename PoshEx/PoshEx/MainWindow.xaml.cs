@@ -68,16 +68,19 @@ namespace PoshEx {
             _poshInstance.AddScript($"{script} | Out-String -Stream");
 
             PSDataCollection<PSObject> outputCollection = new PSDataCollection<PSObject>();
+            outputCollection.DataAdded -= outputCollection_DataAdded;
             outputCollection.DataAdded += outputCollection_DataAdded;
 
             // the streams (error,debug,progress, etc) are available on the poshInstance
             // we can review them during or after execution
             // we can also be notified when a new item is written to the stream (like this):
-            _poshInstance.Streams.Error.DataAdded -= Error_DataAdded;
-            _poshInstance.Streams.Error.DataAdded += Error_DataAdded;
-            _poshInstance.Streams.Progress.DataAdded += Progress_DataAdded;
+            _poshInstance.Streams.Progress.DataAdded -= Progress_DataAdded;
             _poshInstance.Streams.Verbose.DataAdded -= Verbose_DataAdded;
+            _poshInstance.Streams.Error.DataAdded -= Error_DataAdded;
+
+            _poshInstance.Streams.Progress.DataAdded += Progress_DataAdded;
             _poshInstance.Streams.Verbose.DataAdded += Verbose_DataAdded;
+            _poshInstance.Streams.Error.DataAdded += Error_DataAdded;
 
             //begin invoke execution on the pipeline
             // use this overload to specify an output stream buffer
@@ -128,7 +131,6 @@ namespace PoshEx {
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e) {
-            //IAsyncResult foo = _poshInstance.ConnectAsync();
             _poshInstance.BeginStop(null,null);
 
         }
