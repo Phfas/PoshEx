@@ -62,7 +62,7 @@ namespace PoshEx {
 
                     if (item.Parameters != null) {
                         foreach (var paramItem in item.Parameters) {
-                            commandString.Append($" -{paramItem.Name.ToString()} {paramItem.Value.ToString()}");
+                            commandString.Append($" -{paramItem.Name.ToString()} \"{paramItem.Value.ToString()}\"");
                         }
                     }
                 }
@@ -141,7 +141,7 @@ namespace PoshEx {
 
             //begin invoke execution on the pipeline
             // use this overload to specify an output stream buffer
-            IAsyncResult asyncResult = _poshInstance.BeginInvoke<PSObject, PSObject>(null,outputCollection);
+            IAsyncResult asyncResult = _poshInstance.BeginInvoke<PSObject, PSObject>(null, outputCollection);
 
             SetOutput(GetPoshInstanceCommandString(script), false);
 
